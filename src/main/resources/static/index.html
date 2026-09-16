@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareMile — Smart City Ride Sharing & Carpool Management</title>
+    
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 🧭 TOP HEADER -->
+    <header>
+        <a href="#" class="logo-container" onclick="showTab('rides')">
+            <div class="logo-icon">🚗</div>
+            <div class="logo-text">Share<span>Mile</span></div>
+        </a>
+
+        <nav>
+            <button class="nav-btn active" id="tab-btn-rides" onclick="showTab('rides')">🔍 Find Rides</button>
+            <button class="nav-btn" id="tab-btn-publish" onclick="openPublishModal()">➕ Offer a Ride</button>
+            <button class="nav-btn" id="tab-btn-bookings" onclick="showTab('bookings')">📑 My Bookings</button>
+            <button class="nav-btn" id="tab-btn-driver-requests" onclick="showTab('driver-requests')">🚖 Driver Portal</button>
+            <button class="nav-btn" id="tab-btn-analytics" onclick="showTab('analytics')">📊 Analytics & Admin</button>
+        </nav>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Notifications Bell -->
+            <button onclick="toggleNotifications()" style="position: relative; background: transparent; border: none; font-size: 20px; cursor: pointer;">
+                🔔
+                <span id="notif-badge" style="display: none; position: absolute; top: -4px; right: -4px; background: var(--danger); color: white; border-radius: 50%; font-size: 10px; padding: 2px 6px; font-weight: 800;">0</span>
+            </button>
+
+            <!-- User Auth Profile -->
+            <div id="user-display" class="auth-badge">
+                <span id="user-avatar-circle" style="width: 24px; height: 24px; border-radius: 50%; background: #c7d2fe; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--primary);">K</span>
+                <span id="user-name-text">Khushi Singh</span>
+                <button onclick="openAuthModal()" style="border: none; background: none; color: var(--primary); font-size: 12px; cursor: pointer; text-decoration: underline;">Switch</button>
+            </div>
+        </div>
+
+        <!-- 🔔 Notification Dropdown -->
+        <div id="notification-dropdown" class="notif-dropdown">
+            <h4 style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                Notifications
+                <span style="font-size: 11px; color: var(--primary); cursor: pointer;" onclick="clearNotifications()">Clear</span>
+            </h4>
+            <div id="notification-list" style="max-height: 250px; overflow-y: auto;">
+                <p style="font-size: 12px; color: var(--dark-muted); text-align: center; padding: 10px;">No new alerts</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 🌌 HERO SECTION -->
+    <section class="hero-banner">
+        <h1>Smart City Carpooling & <span>Mobility Intelligence</span></h1>
+        <p>Connect with verified commuters on overlapping city routes. Cut your travel costs, eliminate traffic congestion, and reduce urban carbon footprint.</p>
+        
+        <!-- Quick Demo Profiles Switcher -->
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-size: 13px; color: #94a3b8; align-self: center;">Quick Demo Profiles:</span>
+            <button class="btn-outline" style="color: white; border-color: #475569; font-size: 12px; padding: 4px 12px;" onclick="quickLogin('khushi_passenger', 'pass123')">👤 Khushi (Passenger)</button>
+            <button class="btn-outline" style="color: white; border-color: #475569; font-size: 12px; padding: 4px 12px;" onclick="quickLogin('raj_driver', 'driver123')">🚖 Raj (Driver - Honda City)</button>
+            <button class="btn-outline" style="color: white; border-color: #475569; font-size: 12px; padding: 4px 12px;" onclick="quickLogin('admin', 'admin123')">🛡️ Administrator</button>
+        </div>
+    </section>
+
+    <!-- 🔍 SEARCH FLOATING BOX -->
+    <section class="search-card" id="search-bar-section">
+        <div class="search-grid">
+            <div class="form-group">
+                <label>📍 Pickup Location</label>
+                <input type="text" id="search-pickup" value="Hinjawadi Phase 1, Pune" placeholder="e.g., Hinjawadi Phase 1">
+            </div>
+            <div class="form-group">
+                <label>🏁 Destination Location</label>
+                <input type="text" id="search-drop" value="Shivajinagar, Pune" placeholder="e.g., Shivajinagar">
+            </div>
+            <div class="form-group">
+                <label>🕒 Departure Time</label>
+                <input type="datetime-local" id="search-time">
+            </div>
+            <div class="form-group">
+                <label>🌐 Radius (<span id="radius-val">10</span> km)</label>
+                <input type="range" id="search-radius" min="2" max="25" value="10" oninput="document.getElementById('radius-val').innerText = this.value">
+            </div>
+            <button class="btn-primary" style="height: 44px;" onclick="executeSearch()">🔍 Find Rides</button>
+        </div>
+    </section>
+
+    <!-- 🗺️ TAB 1: RIDE SEARCH & LEAFLET MAP VIEW -->
+    <main class="workspace-container" id="tab-rides">
+        <!-- Interactive Leaflet Map -->
+        <div class="map-container">
+            <div id="leaflet-map"></div>
+        </div>
+
+        <!-- Dynamic Results List -->
+        <div class="results-container">
+            <div class="section-header">
+                <h2>Available Carpools (<span id="results-count">0</span>)</h2>
+                <span style="font-size: 13px; color: var(--dark-muted);">Sorted by Haversine Match Score</span>
+            </div>
+
+            <div id="rides-list" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Dynamically populated ride cards -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 📑 TAB 2: MY BOOKINGS -->
+    <main class="workspace-container" id="tab-bookings" style="display: none; grid-template-columns: 1fr;">
+        <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+            <h2 style="margin-bottom: 16px;">My Seat Reservations & Booking History</h2>
+            <div id="my-bookings-list" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 🚖 TAB 3: DRIVER PORTAL & INCOMING REQUESTS -->
+    <main class="workspace-container" id="tab-driver-requests" style="display: none; grid-template-columns: 1fr;">
+        <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Driver Management & Passenger Booking Requests</h2>
+                <button class="btn-primary" onclick="openPublishModal()">➕ Publish New Commute</button>
+            </div>
+            <div id="driver-requests-list" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 📊 TAB 4: ADMINISTRATIVE MOBILITY ANALYTICS -->
+    <main class="workspace-container" id="tab-analytics" style="display: none; grid-template-columns: 1fr;">
+        <div style="background: white; border-radius: 16px; padding: 24px; border: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h2>Smart City Mobility & Environmental Analytics</h2>
+                    <p style="font-size: 14px; color: var(--dark-muted);">Relational database SQL metric aggregations and CO₂ reduction reports.</p>
+                </div>
+                <button class="btn-outline" onclick="loadAnalytics()">🔄 Refresh Metrics</button>
+            </div>
+
+            <!-- KPI Metric Counters -->
+            <div class="analytics-grid">
+                <div class="metric-box">
+                    <h5>Total Published Rides</h5>
+                    <div class="val" id="metric-rides">0</div>
+                    <div class="sub">Across smart-city sectors</div>
+                </div>
+                <div class="metric-box">
+                    <h5>Confirmed Bookings</h5>
+                    <div class="val" id="metric-bookings">0</div>
+                    <div class="sub" id="metric-occupancy">0% Occupancy Rate</div>
+                </div>
+                <div class="metric-box">
+                    <h5>Carbon Offset Saved</h5>
+                    <div class="val" style="color: #059669;" id="metric-carbon">0 kg</div>
+                    <div class="sub">Distance × 0.12 kg/km × (N-1)</div>
+                </div>
+                <div class="metric-box">
+                    <h5>Total Travel Fare Volume</h5>
+                    <div class="val" id="metric-fare">₹0</div>
+                    <div class="sub">Shared commuter savings</div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="chart-row">
+                <div class="chart-card">
+                    <h4 style="font-size: 15px; margin-bottom: 12px;">Hourly Travel Demand & Peak Commute Trends</h4>
+                    <canvas id="hourlyDemandChart" style="height: 260px;"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h4 style="font-size: 15px; margin-bottom: 12px;">Top Commuter Routes</h4>
+                    <canvas id="popularRoutesChart" style="height: 260px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 🚗 MODAL: SEAT BOOKING REQUEST -->
+    <div class="modal-overlay" id="modal-booking">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Request Seat Reservation</h3>
+                <button class="modal-close" onclick="closeModal('modal-booking')">&times;</button>
+            </div>
+            <div id="booking-modal-content">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ➕ MODAL: PUBLISH RIDE -->
+    <div class="modal-overlay" id="modal-publish">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Offer a Carpool Ride</h3>
+                <button class="modal-close" onclick="closeModal('modal-publish')">&times;</button>
+            </div>
+            <form onsubmit="handlePublishRide(event)">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Origin Address / Area</label>
+                    <input type="text" id="pub-origin-title" required value="Nigdi Pradhikaran, Pune">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Destination Address / Area</label>
+                    <input type="text" id="pub-dest-title" required value="Pune Station, Pune">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div class="form-group">
+                        <label>Departure Date & Time</label>
+                        <input type="datetime-local" id="pub-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Available Seats</label>
+                        <input type="number" id="pub-seats" min="1" max="6" value="3" required>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label>Price Per Seat (₹)</label>
+                    <input type="number" id="pub-price" min="20" max="1000" value="80" required>
+                </div>
+
+                <div style="margin-bottom: 18px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">
+                        <input type="checkbox" id="pub-recurring-toggle">
+                        Save as Recurring Commute Template (Daily / Weekdays)
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px;">Publish Ride Now</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 👤 MODAL: AUTH / SWITCH PROFILE -->
+    <div class="modal-overlay" id="modal-auth">
+        <div class="modal-card" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Sign In to ShareMile</h3>
+                <button class="modal-close" onclick="closeModal('modal-auth')">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <p style="font-size: 13px; color: var(--dark-muted);">Select a pre-configured role or enter credentials:</p>
+                <button class="btn-primary" onclick="quickLogin('khushi_passenger', 'pass123')">Login as Khushi Singh (Passenger)</button>
+                <button class="btn-primary" style="background: #059669;" onclick="quickLogin('raj_driver', 'driver123')">Login as Rajesh Sharma (Driver)</button>
+                <button class="btn-primary" style="background: #475569;" onclick="quickLogin('admin', 'admin123')">Login as System Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⭐ MODAL: RATING & REVIEW -->
+    <div class="modal-overlay" id="modal-rating">
+        <div class="modal-card" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3>Rate Your Commute Experience</h3>
+                <button class="modal-close" onclick="closeModal('modal-rating')">&times;</button>
+            </div>
+            <form onsubmit="handleRatingSubmit(event)">
+                <input type="hidden" id="rating-booking-id">
+                <input type="hidden" id="rating-reviewee-id">
+                <div class="form-group" style="margin-bottom: 14px;">
+                    <label>Star Rating</label>
+                    <select id="rating-score">
+                        <option value="5">⭐⭐⭐⭐⭐ 5 Stars - Outstanding</option>
+                        <option value="4">⭐⭐⭐⭐ 4 Stars - Very Good</option>
+                        <option value="3">⭐⭐⭐ 3 Stars - Average</option>
+                        <option value="2">⭐⭐ 2 Stars - Below Average</option>
+                        <option value="1">⭐ 1 Star - Poor</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 18px;">
+                    <label>Feedback & Comments</label>
+                    <textarea id="rating-comment" rows="3" placeholder="Punctual driver, clean car, smooth ride..." style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px;">Submit Rating</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
