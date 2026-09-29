@@ -38,8 +38,8 @@ public class AnalyticsService {
 
         response.setTotalUsers(users.size());
         response.setVerifiedUsers(users.stream().filter(User::isVerified).count());
-        response.setTotalDrivers(users.stream().filter(u -> "ROLE_DRIVER".equalsIgnoreCase(u.getRole())).count());
-        response.setTotalPassengers(users.stream().filter(u -> "ROLE_PASSENGER".equalsIgnoreCase(u.getRole())).count());
+        response.setTotalDrivers(users.stream().filter(u -> (u.getVehicleModel() != null && !u.getVehicleModel().isBlank()) || "ROLE_DRIVER".equalsIgnoreCase(u.getRole())).count());
+        response.setTotalPassengers(users.stream().filter(u -> !"ROLE_ADMIN".equalsIgnoreCase(u.getRole())).count());
 
         response.setTotalRidesPublished(rides.size());
         response.setActiveRides(rides.stream().filter(r -> "SCHEDULED".equalsIgnoreCase(r.getStatus())).count());

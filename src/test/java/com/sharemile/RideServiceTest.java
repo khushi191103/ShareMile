@@ -35,6 +35,11 @@ class RideServiceTest {
     void testPublishAndSearchRide() {
         String driverName = "driver_spatial_" + System.currentTimeMillis();
         User driver = new User(driverName, driverName + "@test.com", "pass", "Spatial Driver", "987", "ROLE_DRIVER");
+        driver.setDriverLicenseNumber("DL-1420110099999");
+        driver.setVehicleModel("Honda City");
+        driver.setVehicleNumber("MH-12-TEST-0001");
+        driver.setVehicleColor("White");
+        driver.setVerified(true);
         userRepository.save(driver);
 
         RideCreateRequest createReq = new RideCreateRequest();

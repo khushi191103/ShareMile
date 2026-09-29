@@ -39,39 +39,48 @@ public class DataInitializer implements CommandLineRunner {
 
         // 1. Seed Users
         User admin = new User("admin", "admin@sharemile.com", passwordEncoder.encode("admin123"), "System Administrator", "9876543210", "ROLE_ADMIN");
+        admin.setGender("OTHER");
         admin.setVerified(true);
         userRepository.save(admin);
 
         User driver1 = new User("raj_driver", "raj@sharemile.com", passwordEncoder.encode("driver123"), "Rajesh Sharma", "9876543211", "ROLE_DRIVER");
-        driver1.setVehicleModel("Honda City (White)");
+        driver1.setVehicleModel("Honda City");
         driver1.setVehicleNumber("MH-12-AB-1234");
+        driver1.setVehicleColor("White");
+        driver1.setDriverLicenseNumber("DL-1420110012345");
+        driver1.setGender("MALE");
         driver1.setVerified(true);
         driver1.setAverageRating(4.9);
         driver1.setTotalRatings(24);
         userRepository.save(driver1);
 
         User driver2 = new User("amit_driver", "amit@sharemile.com", passwordEncoder.encode("driver123"), "Amit Deshmukh", "9876543212", "ROLE_DRIVER");
-        driver2.setVehicleModel("Hyundai Verna (Silver)");
+        driver2.setVehicleModel("Hyundai Verna");
         driver2.setVehicleNumber("MH-14-CD-5678");
+        driver2.setVehicleColor("Silver");
+        driver2.setDriverLicenseNumber("DL-1420150098765");
+        driver2.setGender("MALE");
         driver2.setVerified(true);
         driver2.setAverageRating(4.7);
         driver2.setTotalRatings(15);
         userRepository.save(driver2);
 
         User passenger1 = new User("khushi_passenger", "khushisingh.av@gmail.com", passwordEncoder.encode("pass123"), "Khushi Singh", "9695073789", "ROLE_PASSENGER");
-        passenger1.setVerified(true);
+        passenger1.setGender("FEMALE");
+        passenger1.setVerified(false);
         passenger1.setAverageRating(5.0);
         passenger1.setTotalRatings(8);
         userRepository.save(passenger1);
 
         User passenger2 = new User("sneha_passenger", "sneha@sharemile.com", passwordEncoder.encode("pass123"), "Sneha Patel", "9876543214", "ROLE_PASSENGER");
-        passenger2.setVerified(true);
+        passenger2.setGender("FEMALE");
+        passenger2.setVerified(false);
         passenger2.setAverageRating(4.8);
         passenger2.setTotalRatings(6);
         userRepository.save(passenger2);
 
         // 2. Seed Realistic Smart-City Commute Rides (Pune / PCMC Metro Area)
-        // Ride 1: Hinjawadi Phase 1 to Shivajinagar
+        // Ride 1: Hinjawadi Phase 1 to Shivajinagar (All welcome)
         Ride ride1 = new Ride();
         ride1.setDriver(driver1);
         ride1.setOriginTitle("Hinjawadi Phase 1 IT Park, Pune");
@@ -85,12 +94,16 @@ public class DataInitializer implements CommandLineRunner {
         ride1.setAvailableSeats(2);
         ride1.setPricePerSeat(80.0);
         ride1.setStatus("SCHEDULED");
+        ride1.setGenderPreference("ANY");
+        ride1.setDriverCurrentLat(18.5913);
+        ride1.setDriverCurrentLng(73.7389);
+        ride1.setDriverLocationUpdatedAt(LocalDateTime.now());
         double dist1 = SpatialUtils.haversineDistanceKm(18.5913, 73.7389, 18.5314, 73.8446);
         ride1.setEstimatedDistanceKm(dist1);
         ride1.setEstimatedDurationMin(35);
         rideRepository.save(ride1);
 
-        // Ride 2: Wakad to Magarpatta City
+        // Ride 2: Wakad to Magarpatta City (Boys Only)
         Ride ride2 = new Ride();
         ride2.setDriver(driver2);
         ride2.setOriginTitle("Wakad Bridge, Pune");
@@ -104,15 +117,19 @@ public class DataInitializer implements CommandLineRunner {
         ride2.setAvailableSeats(3);
         ride2.setPricePerSeat(120.0);
         ride2.setStatus("SCHEDULED");
+        ride2.setGenderPreference("MALE_ONLY");
+        ride2.setDriverCurrentLat(18.5987);
+        ride2.setDriverCurrentLng(73.7645);
+        ride2.setDriverLocationUpdatedAt(LocalDateTime.now());
         double dist2 = SpatialUtils.haversineDistanceKm(18.5987, 73.7645, 18.5144, 73.9260);
         ride2.setEstimatedDistanceKm(dist2);
         ride2.setEstimatedDurationMin(45);
         rideRepository.save(ride2);
 
-        // Ride 3: Nigdi (ATSS IICMR) to Pune Railway Station
+        // Ride 3: Nigdi to Pune Railway Station (Girls Only)
         Ride ride3 = new Ride();
         ride3.setDriver(driver1);
-        ride3.setOriginTitle("ATSS IICMR Nigdi, Pradhikaran");
+        ride3.setOriginTitle("Nigdi Pradhikaran, PCMC");
         ride3.setOriginLat(18.6517);
         ride3.setOriginLng(73.7716);
         ride3.setDestTitle("Pune Railway Station");
@@ -123,6 +140,10 @@ public class DataInitializer implements CommandLineRunner {
         ride3.setAvailableSeats(3);
         ride3.setPricePerSeat(95.0);
         ride3.setStatus("SCHEDULED");
+        ride3.setGenderPreference("FEMALE_ONLY");
+        ride3.setDriverCurrentLat(18.6517);
+        ride3.setDriverCurrentLng(73.7716);
+        ride3.setDriverLocationUpdatedAt(LocalDateTime.now());
         double dist3 = SpatialUtils.haversineDistanceKm(18.6517, 73.7716, 18.5284, 73.8739);
         ride3.setEstimatedDistanceKm(dist3);
         ride3.setEstimatedDurationMin(40);
@@ -141,6 +162,8 @@ public class DataInitializer implements CommandLineRunner {
         booking1.setDropTitle("Shivajinagar Court");
         booking1.setDropLat(18.5314);
         booking1.setDropLng(73.8446);
+        booking1.setPassengerNames("Khushi Singh (Self) + Sneha Patel");
+        booking1.setNote("Office commute with 1 laptop bag each");
         booking1.setCarbonOffsetKg(SpatialUtils.calculateCarbonSavingsKg(dist1, 3));
         bookingRepository.save(booking1);
     }

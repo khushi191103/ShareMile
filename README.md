@@ -28,15 +28,6 @@
 
 ```text
 ShareMile/
-├── sharemilenotes/                                # 📚 Comprehensive Recruiter & Interview Notes
-│   ├── 01_PROJECT_OVERVIEW_AND_ELEVATOR_PITCH.md  # 30-sec pitch, 2-min pitch, business value
-│   ├── 02_SYSTEM_ARCHITECTURE_AND_TECH_STACK.md   # Layered architecture, Mermaid diagrams, trade-offs
-│   ├── 03_DATABASE_DESIGN_SCHEMA_AND_ACID.md      # ER diagram, schema, indexes, ACID breakdown
-│   ├── 04_CORE_ALGORITHMS_HAVERSINE_MATCHING.md   # Haversine formula, match score, locking math
-│   ├── 05_API_ENDPOINTS_AND_WEBSOCKET_WORKFLOW.md # REST catalog, sequence diagrams, STOMP flow
-│   ├── 06_TESTING_STRATEGY_AND_EDGE_CASES.md      # Concurrency testing, CountDownLatch, edge cases
-│   ├── 07_INTERVIEW_QUESTIONS_AND_TALKING_POINTS.md # 25+ First-person interviewer Q&A scripts
-│   └── 08_FUTURE_ROADMAP_AND_SCALABILITY.md       # Redis geo-cache, Kafka, microservices roadmap
 ├── src/
 │   ├── main/
 │   │   ├── java/com/sharemile/
@@ -124,23 +115,9 @@ The platform comes pre-seeded with realistic commuters and smart-city Pune corri
 
 ---
 
-## 📚 Recruiter & Interview Notes
+## 👤 Author & Developer
 
-For complete deep-dive documentation, architectural rationales, and first-person interviewer question scripts, refer to the **[`sharemilenotes/`](file:///sharemilenotes/)** directory:
-- [01. Project Overview & Elevator Pitch](file:///sharemilenotes/01_PROJECT_OVERVIEW_AND_ELEVATOR_PITCH.md)
-- [02. System Architecture & Tech Stack Rationale](file:///sharemilenotes/02_SYSTEM_ARCHITECTURE_AND_TECH_STACK.md)
-- [03. Database Design, Schema & ACID Implementation](file:///sharemilenotes/03_DATABASE_DESIGN_SCHEMA_AND_ACID.md)
-- [04. Core Algorithms: Haversine, Match Scoring & Concurrency](file:///sharemilenotes/04_CORE_ALGORITHMS_HAVERSINE_MATCHING_CONCURRENCY.md)
-- [05. REST API Specifications & WebSocket Event Flow](file:///sharemilenotes/05_API_ENDPOINTS_AND_WEBSOCKET_WORKFLOW.md)
-- [06. Testing Strategy, Concurrency Simulation & Edge Cases](file:///sharemilenotes/06_TESTING_STRATEGY_AND_EDGE_CASES.md)
-- [07. 25+ Technical Interview Questions & Talking Points](file:///sharemilenotes/07_INTERVIEW_QUESTIONS_AND_TALKING_POINTS.md)
-- [08. Future Roadmap & Scalability Strategy](file:///sharemilenotes/08_FUTURE_ROADMAP_AND_SCALABILITY.md)
-
----
-
-## 👤 Author
-
-- **Student Name**: Khushi Singh
-- **Institution**: ATSS's Institute of Industrial & Computer Management & Research (IICMR), Nigdi
-- **Academic Year**: 2026–2027 | MCA Semester – II Mini Project
+- **Developer**: Khushi Singh
+- **Role**: Full-Stack Java Developer
 - **GitHub**: [@khushi191103](https://github.com/khushi191103)
+- **Project**: ShareMile — Enterprise Smart City Ride Sharing & Carpool Platform

@@ -30,6 +30,16 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @PostMapping("/verify-driver")
+    public ResponseEntity<AuthResponse> verifyDriver(
+            @Valid @RequestBody com.sharemile.dto.DriverVerificationRequest request,
+            Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(authService.verifyDriver(authentication.getName(), request));
+    }
+
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
         if (authentication == null) {

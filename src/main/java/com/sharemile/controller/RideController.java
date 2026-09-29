@@ -50,4 +50,13 @@ public class RideController {
         String status = payload.get("status");
         return ResponseEntity.ok(rideService.updateRideStatus(id, status, authentication.getName()));
     }
+
+    @PutMapping("/{id}/location")
+    public ResponseEntity<Ride> updateLocation(@PathVariable Long id,
+                                               @RequestBody Map<String, Double> payload,
+                                               Authentication authentication) {
+        double lat = payload.getOrDefault("lat", 0.0);
+        double lng = payload.getOrDefault("lng", 0.0);
+        return ResponseEntity.ok(rideService.updateDriverLocation(id, lat, lng, authentication.getName()));
+    }
 }

@@ -23,10 +23,17 @@ public class RegisterRequest {
 
     private String phone;
 
+    private String gender; // MALE, FEMALE, OTHER
+
+    private String driverLicenseNumber; // Mandatory for drivers
+
+    private String userType = "PASSENGER"; // PASSENGER or DRIVER
+
     private String role; // ROLE_PASSENGER, ROLE_DRIVER
 
     private String vehicleModel;
     private String vehicleNumber;
+    private String vehicleColor;
 
     public RegisterRequest() {}
 
@@ -45,6 +52,15 @@ public class RegisterRequest {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getDriverLicenseNumber() { return driverLicenseNumber; }
+    public void setDriverLicenseNumber(String driverLicenseNumber) { this.driverLicenseNumber = driverLicenseNumber; }
+
+    public String getUserType() { return userType; }
+    public void setUserType(String userType) { this.userType = userType; }
+
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
@@ -53,4 +69,7 @@ public class RegisterRequest {
 
     public String getVehicleNumber() { return vehicleNumber; }
     public void setVehicleNumber(String vehicleNumber) { this.vehicleNumber = vehicleNumber; }
+
+    public String getVehicleColor() { return vehicleColor; }
+    public void setVehicleColor(String vehicleColor) { this.vehicleColor = vehicleColor; }
 }

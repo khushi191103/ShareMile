@@ -35,4 +35,13 @@ public class BookingRequest {
 
     public double getDropLng() { return dropLng; }
     public void setDropLng(double dropLng) { this.dropLng = dropLng; }
+
+    private String passengerNames;
+    private String note;
+
+    public String getPassengerNames() { return passengerNames; }
+    public void setPassengerNames(String passengerNames) { this.passengerNames = passengerNames; }
+
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
 }

@@ -45,4 +45,9 @@ public class RideCreateRequest {
 
     public Long getRecurringRuleId() { return recurringRuleId; }
     public void setRecurringRuleId(Long recurringRuleId) { this.recurringRuleId = recurringRuleId; }
+
+    private String genderPreference = "ANY"; // ANY, MALE_ONLY, FEMALE_ONLY
+
+    public String getGenderPreference() { return genderPreference; }
+    public void setGenderPreference(String genderPreference) { this.genderPreference = genderPreference; }
 }

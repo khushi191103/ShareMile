@@ -21,15 +21,18 @@ public class BookingService {
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final CommunicationService communicationService;
 
     public BookingService(BookingRepository bookingRepository,
                           RideRepository rideRepository,
                           UserRepository userRepository,
-                          NotificationService notificationService) {
+                          NotificationService notificationService,
+                          CommunicationService communicationService) {
         this.bookingRepository = bookingRepository;
         this.rideRepository = rideRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.communicationService = communicationService;
     }
 
     /**
@@ -83,17 +86,25 @@ public class BookingService {
         booking.setDropTitle(request.getDropTitle() != null ? request.getDropTitle() : ride.getDestTitle());
         booking.setDropLat(request.getDropLat() != 0 ? request.getDropLat() : ride.getDestLat());
         booking.setDropLng(request.getDropLng() != 0 ? request.getDropLng() : ride.getDestLng());
+        booking.setPassengerNames(request.getPassengerNames() != null ? request.getPassengerNames() : passenger.getFullName());
+        booking.setNote(request.getNote());
         booking.setCarbonOffsetKg(carbonOffset);
 
         Booking savedBooking = bookingRepository.save(booking);
 
-        // Notify Driver via WebSocket STOMP
-        notificationService.sendNotification(
-                ride.getDriver(),
-                "New Booking Request",
-                passenger.getFullName() + " requested " + seatsRequested + " seat(s) for your ride to " + ride.getDestTitle(),
-                "BOOKING_REQUEST"
-        );
+        // Notify Driver via Email, SMS & WebSocket STOMP
+        String driverMsg = String.format("%s (%s) requested %d seat(s) for your ride to %s (Co-travelers: %s). Please review and accept.",
+                passenger.getFullName(),
+                passenger.getGender() != null ? passenger.getGender() : "Not specified",
+                seatsRequested,
+                ride.getDestTitle(),
+                booking.getPassengerNames());
+        communicationService.notifyMultiChannel(ride.getDriver(), "New Booking Request (Pending Approval)", driverMsg, "BOOKING_REQUEST");
+
+        // Notify Passenger via Email & SMS that request is sent
+        String passengerMsg = String.format("Your reservation request for ride #%d to %s has been submitted. Awaiting driver %s's approval.",
+                ride.getId(), ride.getDestTitle(), ride.getDriver().getFullName());
+        communicationService.notifyMultiChannel(passenger, "Booking Request Submitted", passengerMsg, "BOOKING_REQUEST");
 
         return savedBooking;
     }
@@ -114,24 +125,22 @@ public class BookingService {
 
         if (accept) {
             booking.setStatus("ACCEPTED");
-            notificationService.sendNotification(
-                    booking.getPassenger(),
-                    "Booking Confirmed!",
-                    "Driver " + ride.getDriver().getFullName() + " confirmed your seat reservation for " + ride.getDestTitle(),
-                    "BOOKING_ACCEPTED"
-            );
+            String acceptMsg = String.format("Driver %s has confirmed your ride to %s! Your %d seat(s) are officially confirmed. Total: Rs. %.2f",
+                    ride.getDriver().getFullName(), ride.getDestTitle(), booking.getSeatsBooked(), booking.getTotalFare());
+            communicationService.notifyMultiChannel(booking.getPassenger(), "Ride Booking Confirmed!", acceptMsg, "BOOKING_ACCEPTED");
+
+            // Also acknowledge driver
+            communicationService.notifyMultiChannel(ride.getDriver(), "Booking Accepted",
+                    "You approved booking #" + booking.getId() + " for " + booking.getPassenger().getFullName(), "BOOKING_CONFIRMED");
         } else {
             booking.setStatus("REJECTED");
             // Re-credit the reserved seats back into the available pool
             ride.setAvailableSeats(ride.getAvailableSeats() + booking.getSeatsBooked());
             rideRepository.save(ride);
 
-            notificationService.sendNotification(
-                    booking.getPassenger(),
-                    "Booking Declined",
-                    "Driver " + ride.getDriver().getFullName() + " was unable to accommodate your booking request.",
-                    "BOOKING_REJECTED"
-            );
+            String declineMsg = String.format("Driver %s was unable to accommodate your booking request for ride to %s. Reserved seats have been released.",
+                    ride.getDriver().getFullName(), ride.getDestTitle());
+            communicationService.notifyMultiChannel(booking.getPassenger(), "Booking Declined", declineMsg, "BOOKING_REJECTED");
         }
 
         return bookingRepository.save(booking);

@@ -1,6 +1,8 @@
 package com.sharemile.dto;
 
 import com.sharemile.model.Ride;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RideSearchResult {
     private Ride ride;
@@ -11,6 +13,14 @@ public class RideSearchResult {
     private double timeProximityScore;
     private double driverRatingScore;
     private double estimatedCarbonSavingsKg;
+
+    // Enhanced live location and co-passenger transparency attributes
+    private double driverCurrentLat;
+    private double driverCurrentLng;
+    private double driverDistanceKm;
+    private int driverEtaMinutes;
+    private String genderPreference = "ANY";
+    private List<PassengerSummaryDTO> confirmedPassengers = new ArrayList<>();
 
     public RideSearchResult() {}
 
@@ -50,4 +60,22 @@ public class RideSearchResult {
 
     public double getEstimatedCarbonSavingsKg() { return estimatedCarbonSavingsKg; }
     public void setEstimatedCarbonSavingsKg(double estimatedCarbonSavingsKg) { this.estimatedCarbonSavingsKg = estimatedCarbonSavingsKg; }
+
+    public double getDriverCurrentLat() { return driverCurrentLat; }
+    public void setDriverCurrentLat(double driverCurrentLat) { this.driverCurrentLat = driverCurrentLat; }
+
+    public double getDriverCurrentLng() { return driverCurrentLng; }
+    public void setDriverCurrentLng(double driverCurrentLng) { this.driverCurrentLng = driverCurrentLng; }
+
+    public double getDriverDistanceKm() { return driverDistanceKm; }
+    public void setDriverDistanceKm(double driverDistanceKm) { this.driverDistanceKm = driverDistanceKm; }
+
+    public int getDriverEtaMinutes() { return driverEtaMinutes; }
+    public void setDriverEtaMinutes(int driverEtaMinutes) { this.driverEtaMinutes = driverEtaMinutes; }
+
+    public String getGenderPreference() { return genderPreference; }
+    public void setGenderPreference(String genderPreference) { this.genderPreference = genderPreference; }
+
+    public List<PassengerSummaryDTO> getConfirmedPassengers() { return confirmedPassengers; }
+    public void setConfirmedPassengers(List<PassengerSummaryDTO> confirmedPassengers) { this.confirmedPassengers = confirmedPassengers; }
 }

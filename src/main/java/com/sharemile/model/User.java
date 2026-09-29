@@ -1,5 +1,6 @@
 package com.sharemile.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -17,6 +18,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -26,17 +28,27 @@ public class User {
     @Column(length = 20)
     private String phone;
 
+    @Column(length = 20)
+    private String gender; // MALE, FEMALE, OTHER
+
+    @Column(length = 50)
+    private String driverLicenseNumber;
+
     @Column(nullable = false, length = 30)
     private String role; // ROLE_PASSENGER, ROLE_DRIVER, ROLE_ADMIN
 
     @Column(nullable = false)
     private boolean isVerified = false;
 
+    @Column(nullable = false)
+    private boolean isBlacklisted = false;
+
     private String vehicleModel;
     private String vehicleNumber;
+    private String vehicleColor;
 
     @Column(nullable = false)
-    private double averageRating = 5.0;
+    private double averageRating = 0.0;
 
     @Column(nullable = false)
     private int totalRatings = 0;
@@ -74,17 +86,29 @@ public class User {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getDriverLicenseNumber() { return driverLicenseNumber; }
+    public void setDriverLicenseNumber(String driverLicenseNumber) { this.driverLicenseNumber = driverLicenseNumber; }
+
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
     public boolean isVerified() { return isVerified; }
     public void setVerified(boolean verified) { isVerified = verified; }
 
+    public boolean isBlacklisted() { return isBlacklisted; }
+    public void setBlacklisted(boolean blacklisted) { isBlacklisted = blacklisted; }
+
     public String getVehicleModel() { return vehicleModel; }
     public void setVehicleModel(String vehicleModel) { this.vehicleModel = vehicleModel; }
 
     public String getVehicleNumber() { return vehicleNumber; }
     public void setVehicleNumber(String vehicleNumber) { this.vehicleNumber = vehicleNumber; }
+
+    public String getVehicleColor() { return vehicleColor; }
+    public void setVehicleColor(String vehicleColor) { this.vehicleColor = vehicleColor; }
 
     public double getAverageRating() { return averageRating; }
     public void setAverageRating(double averageRating) { this.averageRating = averageRating; }

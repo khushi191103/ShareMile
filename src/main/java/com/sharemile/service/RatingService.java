@@ -55,8 +55,13 @@ public class RatingService {
 
         // Dynamically recalculate reviewee's average rating
         int previousRatingsCount = reviewee.getTotalRatings();
-        double currentAverage = reviewee.getAverageRating();
-        double newAverage = ((currentAverage * previousRatingsCount) + score) / (previousRatingsCount + 1);
+        double newAverage;
+        if (previousRatingsCount <= 0) {
+            newAverage = score;
+        } else {
+            double currentAverage = reviewee.getAverageRating();
+            newAverage = ((currentAverage * previousRatingsCount) + score) / (previousRatingsCount + 1.0);
+        }
 
         reviewee.setTotalRatings(previousRatingsCount + 1);
         reviewee.setAverageRating(Math.round(newAverage * 10.0) / 10.0);

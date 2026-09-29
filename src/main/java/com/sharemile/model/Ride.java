@@ -48,6 +48,13 @@ public class Ride {
     @Column(nullable = false)
     private String status = "SCHEDULED"; // SCHEDULED, ONGOING, COMPLETED, CANCELLED
 
+    @Column(nullable = false, length = 30)
+    private String genderPreference = "ANY"; // ANY, MALE_ONLY, FEMALE_ONLY
+
+    private double driverCurrentLat;
+    private double driverCurrentLng;
+    private LocalDateTime driverLocationUpdatedAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recurring_rule_id", nullable = true)
     private RecurringRule recurringRule;
@@ -98,6 +105,18 @@ public class Ride {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getGenderPreference() { return genderPreference; }
+    public void setGenderPreference(String genderPreference) { this.genderPreference = genderPreference; }
+
+    public double getDriverCurrentLat() { return driverCurrentLat; }
+    public void setDriverCurrentLat(double driverCurrentLat) { this.driverCurrentLat = driverCurrentLat; }
+
+    public double getDriverCurrentLng() { return driverCurrentLng; }
+    public void setDriverCurrentLng(double driverCurrentLng) { this.driverCurrentLng = driverCurrentLng; }
+
+    public LocalDateTime getDriverLocationUpdatedAt() { return driverLocationUpdatedAt; }
+    public void setDriverLocationUpdatedAt(LocalDateTime driverLocationUpdatedAt) { this.driverLocationUpdatedAt = driverLocationUpdatedAt; }
 
     public RecurringRule getRecurringRule() { return recurringRule; }
     public void setRecurringRule(RecurringRule recurringRule) { this.recurringRule = recurringRule; }

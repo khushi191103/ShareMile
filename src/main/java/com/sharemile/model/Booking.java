@@ -36,6 +36,9 @@ public class Booking {
     private double dropLat;
     private double dropLng;
 
+    private String passengerNames; // Details of co-passengers travelling
+    private String note;           // Special requirements / luggage note
+
     @Column(nullable = false)
     private double carbonOffsetKg = 0.0;
 
@@ -79,6 +82,12 @@ public class Booking {
 
     public double getDropLng() { return dropLng; }
     public void setDropLng(double dropLng) { this.dropLng = dropLng; }
+
+    public String getPassengerNames() { return passengerNames; }
+    public void setPassengerNames(String passengerNames) { this.passengerNames = passengerNames; }
+
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
 
     public double getCarbonOffsetKg() { return carbonOffsetKg; }
     public void setCarbonOffsetKg(double carbonOffsetKg) { this.carbonOffsetKg = carbonOffsetKg; }

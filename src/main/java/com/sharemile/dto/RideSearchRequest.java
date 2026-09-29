@@ -33,4 +33,9 @@ public class RideSearchRequest {
 
     public int getSeatsNeeded() { return seatsNeeded; }
     public void setSeatsNeeded(int seatsNeeded) { this.seatsNeeded = seatsNeeded; }
+
+    private String genderPreference; // ANY, MALE_ONLY, FEMALE_ONLY
+
+    public String getGenderPreference() { return genderPreference; }
+    public void setGenderPreference(String genderPreference) { this.genderPreference = genderPreference; }
 }
